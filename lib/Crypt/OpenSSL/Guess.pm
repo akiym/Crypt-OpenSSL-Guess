@@ -17,19 +17,11 @@ sub openssl_inc_paths {
     my $prefix = find_openssl_prefix();
     my $exec   = find_openssl_exec($prefix);
 
-    unless (-x $exec) {
-        print <<EOM;
-*** Could not find OpenSSL
-    If it's already installed, please set the OPENSSL_PREFIX environment
-    variable accordingly. If it isn't installed yet, get the latest version
-    from http://www.openssl.org/.
-EOM
-        exit 0; # according http://wiki.cpantesters.org/wiki/CPANAuthorNotes this is best-practice when "missing library"
-    }
+    return '' unless -x $exec;
 
     my @inc_paths;
     for ("$prefix/include", "$prefix/inc32", '/usr/kerberos/include') {
-      push @inc_paths, $_ if -f "$_/openssl/ssl.h";
+        push @inc_paths, $_ if -f "$_/openssl/ssl.h";
     }
 
     return join ' ', map { "-I$_" } @inc_paths;
