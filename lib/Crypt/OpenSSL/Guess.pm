@@ -138,15 +138,29 @@ __END__
 
 =head1 NAME
 
-Crypt::OpenSSL::Guess - It's new $module
+Crypt::OpenSSL::Guess - Guess OpenSSL include path
 
 =head1 SYNOPSIS
 
+    use ExtUtils::MakerMaker;
     use Crypt::OpenSSL::Guess;
+
+    WriteMakefile(
+        # ...
+        LIBS => ['-lssl -lcrypto'],
+        INC  => openssl_inc_paths(), # guess include path or get from $ENV{OPENSSL_PREFIX}
+    );
 
 =head1 DESCRIPTION
 
-Crypt::OpenSSL::Guess is ...
+Crypt::OpenSSL::Guess provides helpers to guess OpenSSL include path on any platforms.
+
+Often MacOS's homebrew OpenSSL cause a problem on installation due to include path is not added.
+Some CPAN module provides to modify include path with configure-args, but L<Carton> or L<Module::CPANfile>
+is not supported to pass configure-args to each modules. Crypt::OpenSSL::* modules should use it on your L<Makefile.PL>.
+
+This module resolves the include path by L<Net::SSLeay>'s workaround.
+Original code is taken from C<inc/Module/Install/PRIVATE/Net/SSLeay.pm> by L<Net::SSLeay>.
 
 =head1 FUNCTIONS
 
@@ -154,17 +168,25 @@ Crypt::OpenSSL::Guess is ...
 
 =item openssl_inc_paths()
 
+This functions returns include paths in the format passed to CC. If OpenSSL could not find, then empty string is returned.
+
     openssl_inc_paths(); # on MacOS: "-I/usr/local/opt/openssl/include"
 
 =item find_openssl_prefix([$dir])
+
+This function returns OpenSSL's prefix. If set C<OPENSSL_PREFIX> environment variable, you can overwrite the return value.
 
     find_openssl_prefix(); # on MacOS: "/usr/local/opt/openssl"
 
 =item find_openssl_exec($prefix)
 
+This functions returns OpenSSL's executable path.
+
     find_openssl_exec(); # on MacOS: "/usr/local/opt/openssl/bin/openssl"
 
 =item ($major, $minor, $letter) = openssl_version()
+
+This functions returns OpenSSL's version as major, minor, letter.
 
     openssl_version(); # ("1.0", "2", "n")
 
