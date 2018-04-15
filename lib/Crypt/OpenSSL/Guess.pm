@@ -11,7 +11,7 @@ use Symbol qw(gensym);
 
 use Exporter 'import';
 
-our @EXPORT = qw(openssl_inc_paths find_openssl_prefix find_openssl_exec openssl_version);
+our @EXPORT = qw(openssl_inc_paths openssl_lib_paths find_openssl_prefix find_openssl_exec openssl_version);
 
 sub openssl_inc_paths {
     my $prefix = find_openssl_prefix();
@@ -25,6 +25,48 @@ sub openssl_inc_paths {
     }
 
     return join ' ', map { "-I$_" } @inc_paths;
+}
+
+sub openssl_lib_paths {
+    my $prefix = find_openssl_prefix();
+    my $exec   = find_openssl_exec($prefix);
+
+    return '' unless -x $exec;
+
+    my @lib_paths;
+    for ($prefix, "$prefix/lib64", "$prefix/lib", "$prefix/out32dll") {
+        push @lib_paths, $_ if -d $_;
+    }
+
+    if ($^O eq 'MSWin32') {
+        push @lib_paths, "$prefix/lib/VC" if -d "$prefix/lib/VC";
+
+        my $found = 0;
+        my @pairs = ();
+        # Library names depend on the compiler
+        @pairs = (['eay32','ssl32'],['crypto.dll','ssl.dll'],['crypto','ssl']) if $Config{cc} =~ /gcc/;
+        @pairs = (['libeay32','ssleay32'],['libeay32MD','ssleay32MD'],['libeay32MT','ssleay32MT']) if $Config{cc} =~ /cl/;
+        for my $dir (@lib_paths) {
+            for my $p (@pairs) {
+                $found = 1 if ($Config{cc} =~ /gcc/ && -f "$dir/lib$p->[0].a" && -f "$dir/lib$p->[1].a");
+                $found = 1 if ($Config{cc} =~ /cl/ && -f "$dir/$p->[0].lib" && -f "$dir/p->[1].lib");
+                if ($found) {
+                    @lib_paths = ($dir);
+                    last;
+                }
+            }
+        }
+    }
+    elsif ($^O eq 'VMS') {
+        if (-r 'sslroot:[000000]openssl.cnf') {      # openssl.org source install
+            @lib_paths = ('SSLLIB');
+        }
+        elsif (-r 'ssl$root:[000000]openssl.cnf') {  # HP install
+            @lib_paths = ('SYS$SHARE');
+        }
+    }
+
+    return join ' ', map { "-L$_" } @lib_paths;
 }
 
 my $other_try = 0;
@@ -147,7 +189,7 @@ Crypt::OpenSSL::Guess - Guess OpenSSL include path
 
     WriteMakefile(
         # ...
-        LIBS => ['-lssl -lcrypto'],
+        LIBS => ['-lssl -lcrypto ' . openssl_lib_paths()],
         INC  => openssl_inc_paths(), # guess include path or get from $ENV{OPENSSL_PREFIX}
     );
 
@@ -171,6 +213,12 @@ Original code is taken from C<inc/Module/Install/PRIVATE/Net/SSLeay.pm> by L<Net
 This functions returns include paths in the format passed to CC. If OpenSSL could not find, then empty string is returned.
 
     openssl_inc_paths(); # on MacOS: "-I/usr/local/opt/openssl/include"
+
+=item openssl_lib_paths()
+
+This functions returns library paths in the format passed to CC. If OpenSSL could not find, then empty string is returned.
+
+    openssl_lib_paths(); # on MacOS: "-L/usr/local/opt/openssl -L/usr/local/opt/openssl/lib"
 
 =item find_openssl_prefix([$dir])
 
