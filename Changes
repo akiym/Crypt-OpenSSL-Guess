@@ -2,6 +2,11 @@ Revision history for Perl extension Crypt-OpenSSL-Guess
 
 {{$NEXT}}
 
+0.02_01 2018-04-15T10:05:07Z
+
+    - add openssl_lib_paths() to get OpenSSL's library path
+    - switch to ExtUtils::MakeMaker to remove deps on Module::Build::Tiny
+
 0.01 2018-04-13T07:25:48Z
 
     - original version

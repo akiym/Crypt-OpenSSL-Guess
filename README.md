@@ -10,7 +10,7 @@ Crypt::OpenSSL::Guess - Guess OpenSSL include path
 
     WriteMakefile(
         # ...
-        LIBS => ['-lssl -lcrypto'],
+        LIBS => ['-lssl -lcrypto ' . openssl_lib_paths()],
         INC  => openssl_inc_paths(), # guess include path or get from $ENV{OPENSSL_PREFIX}
     );
 
@@ -32,6 +32,12 @@ Original code is taken from `inc/Module/Install/PRIVATE/Net/SSLeay.pm` by [Net::
     This functions returns include paths in the format passed to CC. If OpenSSL could not find, then empty string is returned.
 
         openssl_inc_paths(); # on MacOS: "-I/usr/local/opt/openssl/include"
+
+- openssl\_lib\_paths()
+
+    This functions returns library paths in the format passed to CC. If OpenSSL could not find, then empty string is returned.
+
+        openssl_lib_paths(); # on MacOS: "-L/usr/local/opt/openssl -L/usr/local/opt/openssl/lib"
 
 - find\_openssl\_prefix(\[$dir\])
 
