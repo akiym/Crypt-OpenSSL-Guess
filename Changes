@@ -2,6 +2,10 @@ Revision history for Perl extension Crypt-OpenSSL-Guess
 
 {{$NEXT}}
 
+0.10 2018-04-16T01:28:22Z
+
+    - bump up version, no changes since last dev release
+
 0.02_01 2018-04-15T10:05:07Z
 
     - add openssl_lib_paths() to get OpenSSL's library path
