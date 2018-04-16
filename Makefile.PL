@@ -24,6 +24,10 @@ my %WriteMakefileArgs = (
 }
 ,
     PREREQ_PM          => {
+  "Config" => 0,
+  "Exporter" => "5.57",
+  "File::Spec" => 0,
+  "Symbol" => 0,
   "perl" => "5.008001"
 }
 ,
