@@ -110,6 +110,12 @@ sub find_openssl_prefix {
         return $ENV{OPENSSL_PREFIX};
     }
 
+    # Homebrew (macOS) or LinuxBrew
+    if ($^O ne 'MSWin32' and my $prefix = `brew --prefix openssl 2>@{[File::Spec->devnull]}`) {
+        chomp $prefix;
+        return $prefix;
+    }
+
     my @guesses = (
         '/home/linuxbrew/.linuxbrew/opt/openssl/bin/openssl' => '/home/linuxbrew/.linuxbrew/opt/openssl', # LinuxBrew openssl
         '/usr/local/opt/openssl/bin/openssl' => '/usr/local/opt/openssl', # OSX homebrew openssl
