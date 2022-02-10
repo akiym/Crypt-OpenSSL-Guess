@@ -221,7 +221,7 @@ Crypt::OpenSSL::Guess - Guess OpenSSL include path
 
 =head1 SYNOPSIS
 
-    use ExtUtils::MakerMaker;
+    use ExtUtils::MakeMaker;
     use Crypt::OpenSSL::Guess;
 
     WriteMakefile(
