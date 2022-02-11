@@ -4,7 +4,7 @@
       "Takumi Akiyama <t.akiym@gmail.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v3.1.12, CPAN::Meta::Converter version 2.150010",
+   "generated_by" : "Minilla/v3.1.15, CPAN::Meta::Converter version 2.150010",
    "license" : [
       "perl_5"
    ],
@@ -63,11 +63,11 @@
       "homepage" : "https://github.com/akiym/Crypt-OpenSSL-Guess",
       "repository" : {
          "type" : "git",
-         "url" : "git://github.com/akiym/Crypt-OpenSSL-Guess.git",
+         "url" : "https://github.com/akiym/Crypt-OpenSSL-Guess.git",
          "web" : "https://github.com/akiym/Crypt-OpenSSL-Guess"
       }
    },
-   "version" : "0.14",
+   "version" : "0.15",
    "x_authority" : "cpan:AKIYM",
    "x_contributors" : [
       "Shoichi Kaji <skaji@cpan.org>"
